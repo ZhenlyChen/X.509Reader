@@ -141,14 +141,14 @@ void parseANS(byte* data, int begin, int end) {
       case 0x03:  // Bit String ¿‡–Õ
         text = new byte[lens.len - 1];
         for (int t = 0; t < lens.len - 1; t++) {
-          text[t] = data[i + t];
+          text[t] = data[i + t + 1];
         }
         ansData.push_back({"", lens.len - 1, text, type});
         break;
       case 0x00:
-        text = new byte[end - begin - 1];
-        for (int t = begin + 1; t < end; t++) {
-          text[t - begin - 1] = data[t];
+        text = new byte[end - i - 1];
+        for (int t = i + 1; t < end; t++) {
+          text[t - i - 1] = data[t];
         }
         ansData.push_back({"0x00", end - begin - 1, text, type});
         break;
