@@ -9,20 +9,20 @@ static const string base64_chars =
     "0123456789+/";
 
 typedef struct {
-  int len;     // ³¤¶È
-  int lenLen;  // ³¤¶ÈËùÕ¼µÄ³¤¶È
-} lenData;     // ³¤¶ÈĞÅÏ¢
+  int len;     // é•¿åº¦
+  int lenLen;  // é•¿åº¦æ‰€å çš„é•¿åº¦
+} lenData;     // é•¿åº¦ä¿¡æ¯
 
 typedef struct {
   string title;
   int len;
   byte* data;
   int type;
-} Item;  // ½âÎöÏîÄ¿
+} Item;  // è§£æé¡¹ç›®
 
 vector<Item> ansData;
 
-// ³¤¶È¡¢³¤¶ÈÕ¼ÓÃ
+// é•¿åº¦ã€é•¿åº¦å ç”¨
 lenData getLen(byte* data, int i) {
   lenData res;
   res.lenLen = 1;
@@ -68,22 +68,22 @@ void parseANS(byte* data, int begin, int end) {
     // cout << begin << "-" << end << "(" << end - begin << "," << lens.len << ")"
     //      << "[" << hex << type << dec << "]" << endl;
     switch (type) {
-      case 0x30:  // ½á¹¹ÌåĞòÁĞ
+      case 0x30:  // ç»“æ„ä½“åºåˆ—
         // title = "Sequence";
         // ansData.push_back({title, lens.len, NULL, type});
         parseANS(data, i, i + lens.len);
         break;
-      case 0x31:  // SetĞòÁĞ
+      case 0x31:  // Setåºåˆ—
         // title = "Set";
         // ansData.push_back({title, lens.len, NULL, type});
         parseANS(data, i, i + lens.len);
         break;
-      case 0xa3:  // À©Õ¹×Ö¶Î
+      case 0xa3:  // æ‰©å±•å­—æ®µ
         title = "Extension";
         ansData.push_back({title, lens.len, NULL, type});
         parseANS(data, i, i + lens.len);
         break;
-      case 0xa0:  // Ö¤Êé°æ±¾
+      case 0xa0:  // è¯ä¹¦ç‰ˆæœ¬
         title = "Version";
         ansData.push_back({title, lens.len, NULL, type});
         parseANS(data, i, i + lens.len);
@@ -117,19 +117,19 @@ void parseANS(byte* data, int begin, int end) {
         ansData.push_back(
             {title.substr(0, title.length() - 1), lens.len, NULL, type});
         break;
-      case 0x17:  // Ê±¼ä´Á
+      case 0x17:  // æ—¶é—´æˆ³
         title = "UTCTime";
-      case 0x13:  // ×Ö·û´®
+      case 0x13:  // å­—ç¬¦ä¸²
       case 0x82:  // subjectUniqueID
-      case 0x16:  // IA5StringÀàĞÍ
-      case 0x0c:  // UTF8StringÀàĞÍ
-      case 0x86:  // ÌØÊâIA5StringÀàĞÍ
+      case 0x16:  // IA5Stringç±»å‹
+      case 0x0c:  // UTF8Stringç±»å‹
+      case 0x86:  // ç‰¹æ®ŠIA5Stringç±»å‹
         for (int t = 0; t < lens.len; t++) {
           title += (char)data[i + t];
         }
         ansData.push_back({title, lens.len, NULL, type});
         break;
-      case 0x01:  // ²¼¶ûÀàĞÍ
+      case 0x01:  // å¸ƒå°”ç±»å‹
         oiFirst = 0xff;
         for (int t = 0; t < lens.len; t++) {
           oiFirst &= data[i + t];
@@ -137,15 +137,15 @@ void parseANS(byte* data, int begin, int end) {
         ansData.push_back(
             {oiFirst == 0 ? "False" : "True", lens.len, NULL, type});
         break;
-      case 0x02:  // ÕûÊıÀàĞÍ
-      case 0x80:  // Ö±½ÓÊä³ö
+      case 0x02:  // æ•´æ•°ç±»å‹
+      case 0x80:  // ç›´æ¥è¾“å‡º
         text = new byte[lens.len];
         for (int t = 0; t < lens.len; t++) {
           text[t] = data[i + t];
         }
         ansData.push_back({title, lens.len, text, type});
         break;
-      case 0x03:  // Bit String ÀàĞÍ
+      case 0x03:  // Bit String ç±»å‹
         text = new byte[lens.len - 1];
         for (int t = 0; t < lens.len - 1; t++) {
           text[t] = data[i + t + 1];
@@ -181,9 +181,9 @@ void parseANS(byte* data, int begin, int end) {
 }
 
 void printTime(string timeStr) {
-  cout << "20" << timeStr[0] << timeStr[1] << "Äê";
-  cout << timeStr[2] << timeStr[3] << "ÔÂ";
-  cout << timeStr[4] << timeStr[5] << "ÈÕ";
+  cout << "20" << timeStr[0] << timeStr[1] << "å¹´";
+  cout << timeStr[2] << timeStr[3] << "æœˆ";
+  cout << timeStr[4] << timeStr[5] << "æ—¥";
   cout << timeStr[6] << timeStr[7] << ":";
   cout << timeStr[8] << timeStr[9] << ":";
   cout << timeStr[10] << timeStr[11];
@@ -208,51 +208,51 @@ void printHexLimit(byte* data, int len) {
 
 void printRes() {
   std::map<string, string> titleToString = {
-      {"1.3.6.1.5.5.7.3.1", "·şÎñÆ÷Éí·İÑéÖ¤(id_kp_serverAuth): True"},
-      {"1.3.6.1.5.5.7.3.2", "¿Í»§¶ËÉí·İÑéÖ¤(id_kp_clientAuth): True"},
-      {"2.5.29.37", "À©Õ¹ÃÜÔ¿ÓÃ·¨(Extended key usage):"},
+      {"1.3.6.1.5.5.7.3.1", "æœåŠ¡å™¨èº«ä»½éªŒè¯(id_kp_serverAuth): True"},
+      {"1.3.6.1.5.5.7.3.2", "å®¢æˆ·ç«¯èº«ä»½éªŒè¯(id_kp_clientAuth): True"},
+      {"2.5.29.37", "æ‰©å±•å¯†é’¥ç”¨æ³•(Extended key usage):"},
       {"2.5.29.31", "CRL Distribution Points:"},
       {"1.2.840.10045.2.1", "EC Public Key:"},
-      {"Extension", "À©Õ¹×Ö¶Î:"},
-      {"2.23.140.1.2.2","×éÖ¯ÑéÖ¤(organization-validated):"},
+      {"Extension", "æ‰©å±•å­—æ®µ:"},
+      {"2.23.140.1.2.2","ç»„ç»‡éªŒè¯(organization-validated):"},
       {"1.3.6.1.5.5.7.1.1", "AuthorityInfoAccess:"},
-      {"2.5.29.19", "»ù±¾Ô¼Êø(Basic Constraints):"},
-      {"1.3.6.1.5.5.7.3.2", "¿Í»§¶ËÉí·İÑéÖ¤(id_kp_clientAuth): True"}};
+      {"2.5.29.19", "åŸºæœ¬çº¦æŸ(Basic Constraints):"},
+      {"1.3.6.1.5.5.7.3.2", "å®¢æˆ·ç«¯èº«ä»½éªŒè¯(id_kp_clientAuth): True"}};
   std::map<string, string> titleToHex = {
       {"1.2.840.10045.3.1.7",
-       "ÍÆ¼öÍÖÔ²ÇúÏßÓò(SEC 2 recommended elliptic curve domain): \n"},
-      {"2.5.29.35", "ÊÚÈ¨ÃÜÔ¿±êÊ¶·û(Authority Key Identifier): "},
-      {"2.5.29.14", "Ö÷ÌåÃÜÔ¿±êÊ¶·û(Subject Key Identifier): "}};
+       "æ¨èæ¤­åœ†æ›²çº¿åŸŸ(SEC 2 recommended elliptic curve domain): \n"},
+      {"2.5.29.35", "æˆæƒå¯†é’¥æ ‡è¯†ç¬¦(Authority Key Identifier): "},
+      {"2.5.29.14", "ä¸»ä½“å¯†é’¥æ ‡è¯†ç¬¦(Subject Key Identifier): "}};
   std::map<string, string> titleToNext = {
       {"1.3.6.1.5.5.7.2.1", "OID for CPS qualifier: "},
       {"1.3.6.1.5.5.7.48.1", "OCSP: "},
       {"1.3.6.1.5.5.7.48.2", "id-ad-caIssuers: "},
-      {"1.3.6.1.4.1.311.60.2.1.1", "ËùÔÚµØ(Locality): "},
-      {"1.3.6.1.4.1.311.60.2.1.3", "¹ú¼Ò(Country): "},
-      {"1.3.6.1.4.1.311.60.2.1.2", "Öİ»òÊ¡(State or province): "},
-      {"2.5.4.3", "Í¨ÓÃÃû³Æ(id-at-commonName): "},
-      {"2.5.4.5", "°ä·¢ÕßĞòÁĞºÅ(id-at-serialNumber): "},
-      {"2.5.4.6", "°ä·¢Õß¹ú¼ÒÃû(id-at-countryName): "},
-      {"2.5.4.7", "°ä·¢ÕßÎ»ÖÃÃû(id-at-localityName): "},
-      {"2.5.4.8", "°ä·¢ÕßÖİÊ¡Ãû(id-at-stateOrProvinceName): "},
-      {"2.5.4.9", "°ä·¢Õß½ÖÇøµØÖ·(id-at-streetAddress): "},
-      {"2.5.4.10", "°ä·¢Õß×éÖ¯Ãû(id-at-organizationName): "},
-      {"2.5.4.11", "°ä·¢Õß×éÖ¯µ¥Î»Ãû(id-at-organizationalUnitName): "},
-      {"2.5.4.12", "°ä·¢Õß±êÌâ(id-at-title): "},
-      {"2.5.4.13", "°ä·¢ÕßÃèÊö(id-at-description): "},
-      {"2.5.4.15", "°ä·¢ÕßÒµÎñÀà±ğ(id-at-businessCategory): "},
-      {"2.5.29.32", "Ö¤Êé²ßÂÔ(Certificate Policies): "},
-      {"2.5.29.15", "Ê¹ÓÃÃÜÔ¿(Key Usage): "}};
+      {"1.3.6.1.4.1.311.60.2.1.1", "æ‰€åœ¨åœ°(Locality): "},
+      {"1.3.6.1.4.1.311.60.2.1.3", "å›½å®¶(Country): "},
+      {"1.3.6.1.4.1.311.60.2.1.2", "å·æˆ–çœ(State or province): "},
+      {"2.5.4.3", "é€šç”¨åç§°(id-at-commonName): "},
+      {"2.5.4.5", "é¢å‘è€…åºåˆ—å·(id-at-serialNumber): "},
+      {"2.5.4.6", "é¢å‘è€…å›½å®¶å(id-at-countryName): "},
+      {"2.5.4.7", "é¢å‘è€…ä½ç½®å(id-at-localityName): "},
+      {"2.5.4.8", "é¢å‘è€…å·çœå(id-at-stateOrProvinceName): "},
+      {"2.5.4.9", "é¢å‘è€…è¡—åŒºåœ°å€(id-at-streetAddress): "},
+      {"2.5.4.10", "é¢å‘è€…ç»„ç»‡å(id-at-organizationName): "},
+      {"2.5.4.11", "é¢å‘è€…ç»„ç»‡å•ä½å(id-at-organizationalUnitName): "},
+      {"2.5.4.12", "é¢å‘è€…æ ‡é¢˜(id-at-title): "},
+      {"2.5.4.13", "é¢å‘è€…æè¿°(id-at-description): "},
+      {"2.5.4.15", "é¢å‘è€…ä¸šåŠ¡ç±»åˆ«(id-at-businessCategory): "},
+      {"2.5.29.32", "è¯ä¹¦ç­–ç•¥(Certificate Policies): "},
+      {"2.5.29.15", "ä½¿ç”¨å¯†é’¥(Key Usage): "}};
 
   for (int i = 0; i < ansData.size(); i++) {
     Item item = ansData[i];
     if (!strcmp(item.title.c_str(), "Version")) {
       item = ansData[++i];
       if (item.type == 0x02) {
-        cout << "Ö¤Êé°æ±¾: ";
+        cout << "è¯ä¹¦ç‰ˆæœ¬: ";
         cout << "V" << item.data[0] + 1 << endl;
         item = ansData[++i];
-        cout << "ĞòÁĞºÅ: ";
+        cout << "åºåˆ—å·: ";
         printHex(item.data, item.len);
       } else {
         i--;
@@ -273,23 +273,23 @@ void printRes() {
       item = ansData[++i];
       cout << item.title << endl;
     } else if (!strcmp(item.title.c_str(), "1.2.840.113549.1.1.11")) {
-      cout << "¼ÓÃÜËã·¨: sha256WithRSAEncryption" << endl;
+      cout << "åŠ å¯†ç®—æ³•: sha256WithRSAEncryption" << endl;
       item = ansData[++i];
       if (item.type == 0x03) {
-        cout << "RSA¹«Ô¿£º" << endl;
+        cout << "RSAå…¬é’¥ï¼š" << endl;
         printHexLimit(item.data, item.len);
       } else {
         i--;
       }
     } else if (!strcmp(item.title.c_str(), "1.2.840.113549.1.1.1")) {
-      cout << "¼ÓÃÜËã·¨: RSA encryption\nRSA¹«Ô¿£º" << endl;
+      cout << "åŠ å¯†ç®—æ³•: RSA encryption\nRSAå…¬é’¥ï¼š" << endl;
       item = ansData[++i];
       printHexLimit(item.data, item.len);
     } else if (!strcmp(item.title.c_str(), "0x00")) {
-      cout << "¹«Ô¿: " << endl;
+      cout << "å…¬é’¥: " << endl;
       printHexLimit(item.data, item.len);
     } else if (!strcmp(item.title.c_str(), "2.5.29.17")) {
-      cout << "Ö÷Ìå±ğÃû(Subject Alternative Name): ";
+      cout << "ä¸»ä½“åˆ«å(Subject Alternative Name): ";
       item = ansData[++i];
       cout << item.title;
       item = ansData[++i];
@@ -301,7 +301,7 @@ void printRes() {
       cout << endl;
     } else if (item.title.length() > 7 &&
                !strcmp(item.title.substr(0, 7).c_str(), "UTCTime")) {
-      cout << "ÓĞĞ§ÆÚ: ";
+      cout << "æœ‰æ•ˆæœŸ: ";
       string beginTime = item.title.substr(7, item.title.length() - 8);
       printTime(beginTime);
       cout << " - ";
@@ -330,13 +330,14 @@ void printDebug() {
 }
 
 void parseX509(string data) {
-  // Base64 ½âÂë
+  // Base64 è§£ç 
+  // cout << data<<endl;
   while (data.length() % 4 != 0) {
     cout << "Error" << endl;
     data.append("=");
   }
   int len = (data.length() / 4) * 3;
-  cout << "Ö¤Êé³¤¶È£º" << len << endl;
+  cout << "è¯ä¹¦é•¿åº¦ï¼š" << len << endl;
   byte text[len] = {0};
   int textIndex = 0;
   for (int i = 0; i < data.length(); i += 4) {
@@ -353,10 +354,10 @@ void parseX509(string data) {
     textIndex += 3;
   }
 
-  // ANS.1 ½âÂë
+  // ANS.1 è§£ç 
   ansData.clear();
   parseANS(text, 0, len);
-  // Êä³öÊı¾İ
+  // è¾“å‡ºæ•°æ®
   // printDebug();
   printRes();
 }
