@@ -37,7 +37,7 @@ X.509证书有多种常用的文件扩展名，代表着不同形式的数据编
 
 也可以表示为以下的形式(RFC 5280)：
 
-```
+```c
 Certificate  ::=  SEQUENCE  {
   tbsCertificate       TBSCertificate,
   signatureAlgorithm   AlgorithmIdentifier,
@@ -56,8 +56,7 @@ TBSCertificate  ::=  SEQUENCE  {
 	subjectUniqueID [2]  IMPLICIT UniqueIdentifier OPTIONAL,
 												-- If present, version MUST be v2 or v3
 	extensions      [3]  EXPLICIT Extensions OPTIONAL
-												-- If present, version MUST be v3
-}
+												-- If present, version MUST be v3}
 
 Version  ::=  INTEGER  {  v1(0), v2(1), v3(2)  }
 
@@ -86,16 +85,24 @@ Extension  ::=  SEQUENCE  {
               -- contains the DER encoding of an ASN.1 value
               -- corresponding to the extension type identified
               -- by extnID
-}
+              }
 ```
 
 
 
 
 
+因此，我们需要解析X.509证书的话，就需要一个Base64解码器和一个ANS.1解码器
 
 
-数据结构；
+
+## 数据结构
+
+### Base64解码器
+
+
+
+
 
 C 语言(可选其它命令式语言) 源代码；
 
