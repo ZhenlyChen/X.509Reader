@@ -244,6 +244,18 @@ void printRes() {
       {"2.5.29.32", "证书策略(Certificate Policies): "},
       {"2.5.29.15", "使用密钥(Key Usage): "}};
 
+    std::map<string, string> algorithmObject = {
+      {"1.2.840.10040.4.1", "DSA"},
+      {"1.2.840.10040.4.3" , "sha1DSA"},
+      {"1.2.840.113549.1.1.1" ,"RSA"},
+      {"1.2.840.113549.1.1.2" , "md2RSA"},
+      {"1.2.840.113549.1.1.3" , "md4RSA"},
+      {"1.2.840.113549.1.1.4" , "md5RSA"},
+      {"1.2.840.113549.1.1.5" , "sha1RSA"},
+      {"1.3.14.3.2.29", "sha1RSA"},
+      {"1.2.840.113549.1.1.13", "sha512RSA"},
+      {"1.2.840.113549.1.1.11","sha256RSA"}}; 
+
   for (int i = 0; i < ansData.size(); i++) {
     Item item = ansData[i];
     if (!strcmp(item.title.c_str(), "Version")) {
@@ -272,21 +284,17 @@ void printRes() {
       cout << titleToNext[item.title];
       item = ansData[++i];
       cout << item.title << endl;
-    } else if (!strcmp(item.title.c_str(), "1.2.840.113549.1.1.11")) {
-      cout << "加密算法: sha256WithRSAEncryption" << endl;
+    } else if (algorithmObject.find(item.title) != algorithmObject.end()) {
+      cout << "加密算法: " << algorithmObject[item.title];
       item = ansData[++i];
       if (item.type == 0x03) {
-        cout << "RSA公钥：" << endl;
+        cout << "\n公钥：" << endl;
         printHexLimit(item.data, item.len);
       } else {
         i--;
       }
-    } else if (!strcmp(item.title.c_str(), "1.2.840.113549.1.1.1")) {
-      cout << "加密算法: RSA encryption\nRSA公钥：" << endl;
-      item = ansData[++i];
-      printHexLimit(item.data, item.len);
     } else if (!strcmp(item.title.c_str(), "0x00")) {
-      cout << "公钥: " << endl;
+      cout << "Public Key: " << endl;
       printHexLimit(item.data, item.len);
     } else if (!strcmp(item.title.c_str(), "2.5.29.17")) {
       cout << "主体别名(Subject Alternative Name): ";
