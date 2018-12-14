@@ -32,8 +32,6 @@ lenData getLen(byte* data, int i) {
     i++;
     for (int j = 0; j < len_len; j++) {
       len <<= 8;
-      // cout << "+" << ((data[i] & 0xf0) >> 4) << "-" << (data[i] & 0xf) <<
-      // endl;
       len += data[i + j];
     }
     res.len = len;
@@ -41,7 +39,6 @@ lenData getLen(byte* data, int i) {
   } else {
     res.len = data[i] & 0x7f;
   }
-  // cout << "debug:" << res.len << "-" << res.lenLen << endl;
   return res;
 }
 
@@ -65,17 +62,11 @@ void parseANS(byte* data, int begin, int end) {
       break;
     }
     title = "";
-    // cout << begin << "-" << end << "(" << end - begin << "," << lens.len << ")"
-    //      << "[" << hex << type << dec << "]" << endl;
     switch (type) {
       case 0x30:  // 结构体序列
-        // title = "Sequence";
-        // ansData.push_back({title, lens.len, NULL, type});
         parseANS(data, i, i + lens.len);
         break;
       case 0x31:  // Set序列
-        // title = "Set";
-        // ansData.push_back({title, lens.len, NULL, type});
         parseANS(data, i, i + lens.len);
         break;
       case 0xa3:  // 扩展字段
@@ -89,8 +80,6 @@ void parseANS(byte* data, int begin, int end) {
         parseANS(data, i, i + lens.len);
         break;
       case 0x04:  // OCTET STRING
-        // title = "Octet";
-        // ansData.push_back({title, lens.len, NULL, type});
         parseANS(data, i, i + lens.len);
       case 0x05:
         break;
@@ -254,7 +243,7 @@ void printRes() {
       {"1.2.840.113549.1.1.5" , "sha1RSA"},
       {"1.3.14.3.2.29", "sha1RSA"},
       {"1.2.840.113549.1.1.13", "sha512RSA"},
-      {"1.2.840.113549.1.1.11","sha256RSA"}}; 
+      {"1.2.840.113549.1.1.11","sha256RSA"}};
 
   for (int i = 0; i < ansData.size(); i++) {
     Item item = ansData[i];
