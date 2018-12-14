@@ -29,3 +29,4 @@ $ cat ./xxx.cer | ./x509
 $ ./x509 ./xxx.cer
 ```
 
+PS: Windows 下运行部分终端可能会有中文编码问题，建议在Linux下运行

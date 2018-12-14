@@ -277,7 +277,7 @@ void printRes() {
       cout << "加密算法: " << algorithmObject[item.title];
       item = ansData[++i];
       if (item.type == 0x03) {
-        cout << "\n公钥：" << endl;
+        cout << "\n公钥: " << endl;
         printHexLimit(item.data, item.len);
       } else {
         i--;
@@ -334,7 +334,7 @@ void parseX509(string data) {
     data.append("=");
   }
   int len = (data.length() / 4) * 3;
-  cout << "证书长度：" << len << endl;
+  cout << "证书长度: " << len << endl;
   byte text[len] = {0};
   int textIndex = 0;
   for (int i = 0; i < data.length(); i += 4) {
