@@ -17,7 +17,7 @@
 编译
 
 ```bash
-$ g++ .\main.cpp .\x509.cpp -fexec-charset=GBK -std=c++11
+$ g++ ./main.cpp ./x509.cpp -fexec-charset=GBK -std=c++11
 ```
 
 运行
